@@ -1,0 +1,11 @@
+<form class="filter-container slider-container" [formGroup]="filterForm">
+    <div class="filter-title">Filter <span class="exclude">by</span> {{formData.key}}:</div>
+    <mat-slider [min]="formData.value.absoluteMin" [max]="formData.value.absoluteMax" discrete>
+        <input matSliderStartThumb (valueChange)="onValueChanged('min', $event)">
+        <input matSliderEndThumb (valueChange)="onValueChanged('max', $event)">
+    </mat-slider>
+    <div class="slider-values">
+        <span>{{formData.value.absoluteMin}}</span>
+        <span>{{formData.value.absoluteMax}}</span>
+    </div>
+</form>

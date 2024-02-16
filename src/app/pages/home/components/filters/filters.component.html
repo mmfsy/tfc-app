@@ -1,0 +1,11 @@
+<div class="sidebar-container">
+    <ng-container *ngFor="let textFilter of textFilters">
+        <app-filter-text [filterData]="textFilter" (onChanged)="onTextFilterChanged($event)"></app-filter-text>
+    </ng-container>
+    <ng-container *ngFor="let numberFilter of numberFilters">
+        <app-filter-number [filterData]="numberFilter" (onChanged)="onNumberFilterChanged($event)"></app-filter-number>
+    </ng-container>
+    <ng-container *ngFor="let arrayFilter of arrayFilters">
+        <app-filter-array [filterData]="arrayFilter" (onChanged)="onArrayFilterChanged($event)"></app-filter-array>
+    </ng-container>
+</div>

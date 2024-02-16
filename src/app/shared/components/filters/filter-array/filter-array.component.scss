@@ -1,0 +1,13 @@
+.filter-content {
+    height: 100%;
+    overflow: auto;
+
+    .checkbox-filter-item {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 20px;
+        cursor: pointer;
+    }
+}

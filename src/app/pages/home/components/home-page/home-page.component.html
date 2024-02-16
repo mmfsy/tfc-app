@@ -1,0 +1,8 @@
+<div class="home-page-wrapper" *ngIf="tableModel">
+    <app-filters
+        [filters]="filters"
+        [headers]="tableModel.headers"
+        (onFiltersChanged)="onFiltersChanged($event)"
+    ></app-filters>
+    <app-table [data]="tableModel"></app-table>
+</div>

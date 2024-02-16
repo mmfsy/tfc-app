@@ -1,0 +1,26 @@
+.filter-container.input-container {
+    height: auto;
+
+    input {
+        width: 100%;
+        height: 26px;
+        border: 1px solid #CDD9ED;
+        border-radius: 3px;
+        outline: none;
+        font-size: 12px;
+        padding: 0 6px;
+        color: black;
+
+        &::placeholder {
+            color: #99A3BA;
+        }
+
+        &:hover {
+            border-color: #678EFE;
+        }
+
+        &:focus {
+            border-color: #275EFE;
+        }
+    }
+}

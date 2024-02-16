@@ -1,0 +1,11 @@
+<form class="filter-container" [formGroup]="filterForm">
+    <span class="filter-title"> Filter <span class="exclude">by</span> {{formData.key}}: </span>
+    <div class="filter-content">
+        <div *ngFor="let option of formData.value">
+            <label class="checkbox-filter-item">
+                {{ option }}
+                <input [formControlName]="option" type="checkbox" />
+            </label>
+        </div>
+    </div>
+</form>

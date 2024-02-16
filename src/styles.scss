@@ -1,1 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body { 
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    max-height: 100vh;
+    padding-top: 50px;
+    overflow: auto;
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(229,229,229,1) rgba(229,229,229,0.3);
+}
+
+/* Chrome, Edge, and Safari */  
+::-webkit-scrollbar {
+    width: 10px !important;
+    height: 10px !important;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+    background-color: rgba(229,229,229,0.3) !important;
+}
+
+::-webkit-scrollbar-thumb {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: rgba(229,229,229,1) !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    background-clip: padding-box !important;
+}
+
+:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(201,201,201,1) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--neutral-85) !important;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: rgba(201,201,201,1) !important;
+}
+
+.e-gridheader {
+    scrollbar-color: transparent transparent;
+}
+
+.e-gridheader::-webkit-scrollbar-track,
+.e-gridheader::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+

@@ -1,6 +1,6 @@
 export interface ITableModel {
-    headers: Array<IProductHeader>;
-    data: Array<IProduct>;
+    headers: IProductHeader[];
+    data: IProduct[];
 }
 
 export interface IProductHeader {
@@ -16,5 +16,5 @@ export interface IProduct {
     category: string;
     material: string;
     price: number;
-    tags: Array<string>;
+    tags: string[];
 }

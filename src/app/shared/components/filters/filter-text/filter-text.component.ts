@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ITextFilter } from '@models/filter';
 
 @Component({
   selector: 'app-filter-text',
   templateUrl: './filter-text.component.html',
-  styleUrls: ['../filter.scss', './filter-text.component.scss']
+  styleUrls: ['../filter.scss', './filter-text.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterTextComponent {
 

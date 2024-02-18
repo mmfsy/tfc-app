@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IProductHeader } from '@models/product';
 import { IFilters } from '@models/filter';
@@ -7,7 +7,8 @@ import { IArrayFilter, ITextFilter, INumberFilter } from '@models/filter';
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.component.html',
-  styleUrl: './filters.component.scss'
+  styleUrl: './filters.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FiltersComponent implements OnInit {
 
@@ -17,9 +18,8 @@ export class FiltersComponent implements OnInit {
 
   filtersForm: FormGroup = new FormGroup([]);
 
-  @Input() headers: Array<IProductHeader> = [];
+  @Input() headers: IProductHeader[] = [];
   @Input() filters: IFilters = {}
-
 
   @Output() onFiltersChanged = new EventEmitter<IFilters>();
 

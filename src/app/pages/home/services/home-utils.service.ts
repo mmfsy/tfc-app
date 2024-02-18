@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription, bufferCount, concatMap, delay, from, map, mergeMap, of } from 'rxjs';
 import { IProduct, IProductHeader, ITableModel } from '@models/product';
 import { IFilters, INumberFilterValue } from '@models/filter';
+import { ITableData } from '@models/table';
 
 interface ITempFilters {
   [key: string]: string | Set<string> | INumberFilterValue;
@@ -12,8 +13,10 @@ export class HomeUtilsService {
 
   private _data: IProduct[] = [];
   private _headers: IProductHeader[] = [];
+  private _filterSourcesSub: Subscription;
 
-  dataSource$ = new BehaviorSubject<ITableModel>(null);
+  tableData$ = new BehaviorSubject<ITableData>(null);
+  tableHeaders$ = new BehaviorSubject<IProductHeader[]>(null);
   filters$ = new BehaviorSubject<IFilters>(null);
 
   constructor() { }
@@ -48,56 +51,69 @@ export class HomeUtilsService {
           }
         }
       }
-    });
+    });  
 
-    // fill filters options
-    this._data.forEach(product => {
-      const productKeys = Object.keys(product).filter(dataItemKey => tempFilters[dataItemKey]);
-      productKeys.forEach(productKey => {
-        const productField = product[productKey as keyof IProduct];
-        if (tempFilters[productKey] instanceof Set) {
-          const setFilter = tempFilters[productKey] as Set<string>;
-          if (Array.isArray(productField)) {
-            (productField as string[]).forEach(item => {
-              setFilter.add(item);
-            });
+    from(this._data).pipe(
+      bufferCount(100),
+      concatMap(chunk => of(chunk).pipe(delay(100))),
+      // fill filters options
+      map((products: IProduct[]) => {
+        products.forEach(product => {
+          const productKeys = Object.keys(product).filter(dataItemKey => tempFilters[dataItemKey]);
+          productKeys.forEach(productKey => {
+            const productField = product[productKey as keyof IProduct];
+            if (tempFilters[productKey] instanceof Set) {
+              const setFilter = tempFilters[productKey] as Set<string>;
+              if (Array.isArray(productField)) {
+                (productField as string[]).forEach(item => {
+                  setFilter.add(item);
+                });
+              } else {
+                setFilter.add(productField as string);
+              }
+            } else {
+              const numberFilter = tempFilters[productKey] as INumberFilterValue;
+              if (numberFilter.min > (productField as number)) {
+                numberFilter.min = productField as number;
+                numberFilter.absoluteMin = productField as number;
+              }
+    
+              if (numberFilter.max < (productField as number)) {
+                numberFilter.max = productField as number;
+                numberFilter.absoluteMax = productField as number;
+              }
+            }
+          });
+        });
+        return tempFilters;
+      }),
+      // replace Set with Array
+      mergeMap(tempFilters => {
+        const filters: IFilters = {};
+        Object.keys(tempFilters).forEach(filterKey => {
+          if (tempFilters[filterKey] instanceof Set) {
+            filters[filterKey] = Array.from(tempFilters[filterKey] as Set<string>);
           } else {
-            setFilter.add(productField as string);
+            filters[filterKey] = tempFilters[filterKey] as INumberFilterValue;
           }
-        } else {
-          const numberFilter = tempFilters[productKey] as INumberFilterValue;
-          if (numberFilter.min > (productField as number)) {
-            numberFilter.min = productField as number;
-            numberFilter.absoluteMin = productField as number;
-          }
-
-          if (numberFilter.max < (productField as number)) {
-            numberFilter.max = productField as number;
-            numberFilter.absoluteMax = productField as number;
-          }
-        }
-      });
+        });
+        return of(filters);
+      })
+    ).subscribe(filters => {
+      this.filters$.next(filters);
     });
 
-    // replace Set with Array
-    const filters: IFilters = {};
-    Object.keys(tempFilters).forEach(filterKey => {
-      if (tempFilters[filterKey] instanceof Set) {
-        filters[filterKey] = Array.from(tempFilters[filterKey] as Set<string>);
-      } else {
-        filters[filterKey] = tempFilters[filterKey] as INumberFilterValue;
-      }
-    });
-
-    this.filters$.next(filters);
+    this.tableHeaders$.next(this._headers);
     this.filterData(null);
   }
 
-  filterData(filters: IFilters) {  
+  filterData(filters: IFilters) {
+    this._filterSourcesSub?.unsubscribe();
+
     if (!filters) {
-      this.dataSource$.next({
+      this.tableData$.next({
         data: this._data,
-        headers: this._headers
+        isReset: true
       });
       return;
     }
@@ -111,7 +127,10 @@ export class HomeUtilsService {
           return result;
         }
       } else if (typeof filters[filterKey] === 'object') {
-        result[filterKey] = filters[filterKey];
+        const filter = filters[filterKey] as INumberFilterValue;
+        if (filter.min !== filter.absoluteMin || filter.max !== filter.absoluteMax) {
+          result[filterKey] = filters[filterKey];
+        }
       } else if (filters[filterKey]) {
         result[filterKey] = filters[filterKey];
       }
@@ -119,43 +138,54 @@ export class HomeUtilsService {
     }, {});
 
     if (!Object.keys(parsedFilters).length) {
-      this.dataSource$.next({
+      this.tableData$.next({
         data: this._data,
-        headers: this._headers
+        isReset: true
       });
       return;
     }
 
-    let filteredDataSource = [...this._data];
+    this.tableData$.next({
+      data: [],
+      isReset: true
+    });
 
     const filterKeys = Object.keys(parsedFilters);
-    filteredDataSource = filteredDataSource.reduce((result: Array<IProduct>, origSource: IProduct) => {
-      const source = {...origSource, ...{tags: [...origSource.tags]}};
-      for (let i = 0; i < filterKeys.length; i++) {
-        const filterKey = filterKeys[i];
-        const filterValue = parsedFilters[filterKey];
-        if (Array.isArray(filterValue)) {
-          if (!this.filterByArray(source, filterKey, filterValue)) {
-            return result;
+    this._filterSourcesSub = from(this._data).pipe(
+      bufferCount(100),
+      concatMap(chunk => of([...chunk]).pipe(delay(100))),
+      // filter sources
+      mergeMap((chunk: IProduct[]) => {
+        const filteredChunk = chunk.reduce((result: IProduct[], origSource: IProduct) => {
+          const source = {...origSource, ...{tags: [...origSource.tags]}};
+          for (let i = 0; i < filterKeys.length; i++) {
+            const filterKey = filterKeys[i];
+            const filterValue = parsedFilters[filterKey];
+            if (Array.isArray(filterValue)) {
+              if (!this.filterByArray(source, filterKey, filterValue)) {
+                return result;
+              }
+            } else if (typeof filterValue === 'string') {
+              if (!this.filterByString(source, filterValue)) {
+                return result;
+              }
+            } else {
+              if (!this.filterByNumber(source, filterKey, filterValue)) {
+                return result;
+              }
+            }
           }
-        } else if (typeof filterValue === 'string') {
-          if (!this.filterByString(source, filterValue)) {
-            return result;
-          }
-        } else {
-          if (!this.filterByNumber(source, filterKey, filterValue)) {
-            return result;
-          }
-        }
-      }
-
-      result.push(source);
-      return result;
-    }, []);
-
-    this.dataSource$.next({
-      data: filteredDataSource,
-      headers: this._headers
+    
+          result.push(source);
+          return result;
+        }, []);
+        return of(filteredChunk);
+      })
+    ).subscribe((products: IProduct[]) => {
+      this.tableData$.next({
+        data: products,
+        isReset: false
+      });
     });
   }
 

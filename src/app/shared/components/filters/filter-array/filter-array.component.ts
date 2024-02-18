@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IArrayFilter } from '@models/filter';
 
 @Component({
   selector: 'app-filter-array',
   templateUrl: './filter-array.component.html',
-  styleUrls: ['../filter.scss', './filter-array.component.scss']
+  styleUrls: ['../filter.scss', './filter-array.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterArrayComponent {
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HomeApiService } from '../../services/home-api.service';
 import { HomeUtilsService } from '../../services/home-utils.service';
-import { ITableModel } from '@models/product';
+import { IProduct, IProductHeader } from '@models/product';
 import { IFilters } from '@models/filter';
 
 @Component({
@@ -11,7 +11,8 @@ import { IFilters } from '@models/filter';
 })
 export class HomePageComponent implements OnInit {
 
-  tableModel: ITableModel = null;
+  tableData: IProduct[] = null;
+  tableHeaders: IProductHeader[] = null;
   filters: IFilters = null;
 
   constructor(private homeApi: HomeApiService, private homeUtils: HomeUtilsService) {}
@@ -20,15 +21,27 @@ export class HomePageComponent implements OnInit {
     this.homeApi.loadProducts().subscribe(products => {
       this.homeUtils.prepareTableData(products);
     });
+    
+    this.homeUtils.tableData$.subscribe(tableData => {
+      if (tableData) {
+        if (tableData.isReset) {
+          this.tableData = [];
+        }
+        this.tableData = this.tableData.concat(tableData.data);
+      }
+    });
 
-    this.homeUtils.dataSource$.subscribe(tableModel => {
-      if (tableModel) {
-        this.tableModel = tableModel;
+    this.homeUtils.tableHeaders$.subscribe(tableHeaders => {
+      if (tableHeaders) {
+        this.tableHeaders = tableHeaders;
       }
     });
 
     this.homeUtils.filters$.subscribe(filters => {
-      this.filters = filters;
+      console.log(this.filters == filters);
+      if (filters) {
+        this.filters = filters;
+      }
     });
   }
 

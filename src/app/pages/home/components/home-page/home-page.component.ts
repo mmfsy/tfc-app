@@ -38,7 +38,6 @@ export class HomePageComponent implements OnInit {
     });
 
     this.homeUtils.filters$.subscribe(filters => {
-      console.log(this.filters == filters);
       if (filters) {
         this.filters = filters;
       }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IProductHeader } from '@models/product';
 import { IFilters } from '@models/filter';
@@ -10,7 +10,7 @@ import { IArrayFilter, ITextFilter, INumberFilter } from '@models/filter';
   styleUrl: './filters.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FiltersComponent implements OnInit {
+export class FiltersComponent {
 
   arrayFilters: IArrayFilter[] = [];
   textFilters: ITextFilter[] = [];
@@ -19,19 +19,19 @@ export class FiltersComponent implements OnInit {
   filtersForm: FormGroup = new FormGroup([]);
 
   @Input() headers: IProductHeader[] = [];
-  @Input() filters: IFilters = {}
 
-  @Output() onFiltersChanged = new EventEmitter<IFilters>();
-
-  constructor(private formBuilder: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.buildForm(this.filters);
+  @Input() set filters(filters: IFilters) {
+    this.resetFilters();
+    this.buildForm(filters);
 
     this.filtersForm.valueChanges.subscribe(formValue => {
       this.onFiltersChanged.emit(formValue);
     });
   }
+
+  @Output() onFiltersChanged = new EventEmitter<IFilters>();
+
+  constructor(private formBuilder: FormBuilder) {}
 
   onArrayFilterChanged(event: IArrayFilter) {
     this.filtersForm.get(event.key).setValue(event.value);
@@ -65,6 +65,14 @@ export class FiltersComponent implements OnInit {
         } as ITextFilter);
       }
     });
+  }
+
+  private resetFilters() {
+    this.arrayFilters = [];
+    this.textFilters = [];
+    this.numberFilters = [];
+
+    this.filtersForm = new FormGroup([]);
   }
 
 }

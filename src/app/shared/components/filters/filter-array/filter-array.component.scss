@@ -1,6 +1,7 @@
 .filter-content {
     height: 100%;
     overflow: auto;
+    padding-right: 4px;
 
     .checkbox-filter-item {
         width: 100%;
@@ -9,5 +10,15 @@
         align-items: center;
         padding-right: 20px;
         cursor: pointer;
+        padding: 2px;
+        border-radius: 2px;
+
+        input:hover {
+            cursor: pointer;
+        }
+
+        &:hover {
+            background: rgba(0, 0, 0, .06);
+        }
     }
 }

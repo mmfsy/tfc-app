@@ -1,7 +1,7 @@
 .filter-container {
     position: relative;
     height: 100%;
-    max-height: 23%;
+    max-height: calc((100% - 144px - 40px - 60px) / 3);
     padding-top: 25px;
     margin-bottom: 20px;
 

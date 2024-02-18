@@ -6,11 +6,19 @@ describe('HomeApiService', () => {
   let service: HomeApiService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [HomeApiService]
+    });
     service = TestBed.inject(HomeApiService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('loadProducts() should return data', () => {
+    service.loadProducts().subscribe(data => {
+      expect(data).toBeTruthy();
+    });
   });
 });

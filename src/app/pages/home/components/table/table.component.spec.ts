@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@shared/shared.module';
 
 import { TableComponent } from './table.component';
 
@@ -8,7 +10,11 @@ describe('TableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableComponent]
+      imports: [SharedModule],
+      declarations: [TableComponent],
+      providers: [
+        provideAnimations()
+      ]
     })
     .compileComponents();
     

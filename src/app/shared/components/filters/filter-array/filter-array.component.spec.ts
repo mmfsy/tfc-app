@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FilterArrayComponent } from './filter-array.component';
 
 describe('FilterArrayComponent', () => {
@@ -8,12 +8,15 @@ describe('FilterArrayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FilterArrayComponent]
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [FilterArrayComponent]
     })
     .compileComponents();
     
     fixture = TestBed.createComponent(FilterArrayComponent);
     component = fixture.componentInstance;
+    component.filterForm = new FormGroup('');
+    component.formData = {key: 'test', value: []}
     fixture.detectChanges();
   });
 

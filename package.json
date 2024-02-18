@@ -1,5 +1,5 @@
 {
-  "name": "tfc",
+  "name": "tfc-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",

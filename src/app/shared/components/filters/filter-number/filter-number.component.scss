@@ -1,13 +1,9 @@
-.filter-container.slider-container {
-    height: auto;
+mat-slider {
+    width: calc(100% - 16px);
+}
 
-    .slider-values {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    mat-slider {
-        width: 230px;
-    }
-}    
+.slider-values {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}

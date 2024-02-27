@@ -1,9 +1,7 @@
 .filter-container {
     position: relative;
     height: 100%;
-    max-height: calc((100% - 144px - 40px - 60px) / 3);
-    padding-top: 25px;
-    margin-bottom: 20px;
+    padding: 25px 0 20px 0;
 
     .filter-title {
         font-weight: bold;
@@ -14,6 +12,15 @@
 
         .exclude {
             text-transform: none;
+        }
+    }
+
+    .filter-content {
+        height: 100%;
+        overflow: auto;
+
+        &:has(app-filter-number) {
+            overflow: visible;
         }
     }
 }

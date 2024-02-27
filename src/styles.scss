@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Core Grid CSS */
+@import 'ag-grid-community/styles/ag-grid.css';
+/* Quartz Theme Specific CSS */
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
+
 * {
     box-sizing: border-box;
 }
@@ -21,7 +26,7 @@ body {
 /* Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(229,229,229,1) rgba(229,229,229,0.3);
+    scrollbar-color: rgba(100,100,100,1) rgba(100,100,100,0.3);
 }
 
 /* Chrome, Edge, and Safari */  
@@ -32,28 +37,28 @@ body {
 
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-corner {
-    background-color: rgba(229,229,229,0.3) !important;
+    background-color: rgba(100,100,100,0.3) !important;
 }
 
 ::-webkit-scrollbar-thumb {
     width: 8px !important;
     height: 8px !important;
-    background-color: rgba(229,229,229,1) !important;
+    background-color: rgba(100,100,100,1) !important;
     border-radius: 6px !important;
     border: 1px solid transparent !important;
     background-clip: padding-box !important;
 }
 
 :hover::-webkit-scrollbar-thumb {
-    background-color: rgba(201,201,201,1) !important;
+    background-color: rgba(70,70,70,1) !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--neutral-85) !important;
+    background-color: rgba(70,70,70,1) !important;
 }
 
 ::-webkit-scrollbar-thumb:active {
-    background-color: rgba(201,201,201,1) !important;
+    background-color: rgba(70,70,70,1) !important;
 }
 
 .e-gridheader {

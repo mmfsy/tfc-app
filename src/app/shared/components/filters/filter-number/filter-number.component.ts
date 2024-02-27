@@ -5,7 +5,7 @@ import { INumberFilter } from '@models/filter';
 @Component({
   selector: 'app-filter-number',
   templateUrl: './filter-number.component.html',
-  styleUrls: ['../filter.scss', './filter-number.component.scss'],
+  styleUrl: './filter-number.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterNumberComponent {

@@ -24,7 +24,7 @@ export class HomePageComponent implements OnInit {
     
     this.homeUtils.tableData$.subscribe(tableData => {
       if (tableData) {
-        if (tableData.isReset) {
+        if (tableData.reset) {
           this.tableData = [];
         }
         this.tableData = this.tableData.concat(tableData.data);

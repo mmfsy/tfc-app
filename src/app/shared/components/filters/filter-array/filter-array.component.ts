@@ -5,7 +5,7 @@ import { IArrayFilter } from '@models/filter';
 @Component({
   selector: 'app-filter-array',
   templateUrl: './filter-array.component.html',
-  styleUrls: ['../filter.scss', './filter-array.component.scss'],
+  styleUrl: './filter-array.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterArrayComponent {

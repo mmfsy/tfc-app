@@ -1,9 +1,10 @@
-<div class="home-page-wrapper" *ngIf="tableHeaders && tableData">
+<div class="home-page-wrapper">
     <app-filters
-        *ngIf="filters"
         [filters]="filters"
         [headers]="tableHeaders"
         (onFiltersChanged)="onFiltersChanged($event)"
     ></app-filters>
-    <app-table [headers]="tableHeaders" [data]="tableData"></app-table>
+    <ng-container *ngIf="tableHeaders && tableData">
+        <app-table [headers]="tableHeaders" [data]="tableData"></app-table>
+    </ng-container>
 </div>

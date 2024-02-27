@@ -1,5 +1,4 @@
-<form class="filter-container slider-container" [formGroup]="filterForm">
-    <div class="filter-title">Filter <span class="exclude">by</span> {{formData.key}}:</div>
+<ng-container [formGroup]="filterForm">
     <mat-slider [min]="formData.value.absoluteMin" [max]="formData.value.absoluteMax" discrete>
         <input matSliderStartThumb (valueChange)="onValueChanged('min', $event)">
         <input matSliderEndThumb (valueChange)="onValueChanged('max', $event)">
@@ -8,4 +7,4 @@
         <span>{{formData.value.absoluteMin}}</span>
         <span>{{formData.value.absoluteMax}}</span>
     </div>
-</form>
+</ng-container>

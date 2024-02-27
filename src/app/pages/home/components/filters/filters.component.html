@@ -1,11 +1,23 @@
 <div class="sidebar-container">
-    <ng-container *ngFor="let textFilter of textFilters">
-        <app-filter-text [filterData]="textFilter" (onChanged)="onTextFilterChanged($event)"></app-filter-text>
-    </ng-container>
-    <ng-container *ngFor="let numberFilter of numberFilters">
-        <app-filter-number [filterData]="numberFilter" (onChanged)="onNumberFilterChanged($event)"></app-filter-number>
-    </ng-container>
-    <ng-container *ngFor="let arrayFilter of arrayFilters">
-        <app-filter-array [filterData]="arrayFilter" (onChanged)="onArrayFilterChanged($event)"></app-filter-array>
-    </ng-container>
+    <app-filter class="sidebar-filter text-filter" *ngFor="let textFilter of textFilters" [title]="textFilter.key">
+        <app-filter-text 
+            filterTemplate
+            [filterData]="textFilter"
+            (onChanged)="onTextFilterChanged($event)">
+        </app-filter-text>
+    </app-filter>
+    <app-filter class="sidebar-filter num-filter" *ngFor="let numberFilter of numberFilters" [title]="numberFilter.key">
+        <app-filter-number
+            filterTemplate
+            [filterData]="numberFilter"
+            (onChanged)="onNumberFilterChanged($event)">
+        </app-filter-number>
+    </app-filter>
+    <app-filter class="sidebar-filter arr-filter" *ngFor="let arrayFilter of arrayFilters" [title]="arrayFilter.key">
+        <app-filter-array
+            filterTemplate
+            [filterData]="arrayFilter"
+            (onChanged)="onArrayFilterChanged($event)">
+        </app-filter-array>
+    </app-filter>
 </div>

@@ -5,7 +5,7 @@ import { ITextFilter } from '@models/filter';
 @Component({
   selector: 'app-filter-text',
   templateUrl: './filter-text.component.html',
-  styleUrls: ['../filter.scss', './filter-text.component.scss'],
+  styleUrl: './filter-text.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterTextComponent {

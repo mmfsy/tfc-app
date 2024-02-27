@@ -7,6 +7,9 @@ import { HomePageRoutingModule } from './home-page-routing.module';
 
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { TableComponent } from './components/table/table.component';
+import { DefaultCellComponent } from './components/table/cells/default-cell/default-cell.component';
+import { ChipsCellComponent } from './components/table/cells/chips-cell/chips-cell.component';
+import { NumberCellComponent } from './components/table/cells/number-cell/number-cell.component';
 import { FiltersComponent } from './components/filters/filters.component';
 
 import { HomeApiService } from './services/home-api.service';
@@ -16,6 +19,9 @@ import { HomeUtilsService } from './services/home-utils.service';
   declarations: [
     HomePageComponent,
     TableComponent,
+    DefaultCellComponent,
+    ChipsCellComponent,
+    NumberCellComponent,
     FiltersComponent
   ],
   imports: [

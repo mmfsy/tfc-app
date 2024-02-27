@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subscription, bufferCount, concatMap, delay, from, map, mergeMap, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, bufferCount, concatMap, delay, from, map, mergeMap, of } from 'rxjs';
 import { IProduct, IProductHeader, ITableModel } from '@models/product';
 import { IFilters, INumberFilterValue } from '@models/filter';
 import { ITableData } from '@models/table';
@@ -18,8 +18,6 @@ export class HomeUtilsService {
   tableData$ = new BehaviorSubject<ITableData>(null);
   tableHeaders$ = new BehaviorSubject<IProductHeader[]>(null);
   filters$ = new BehaviorSubject<IFilters>(null);
-
-  constructor() { }
 
   prepareTableData(model: ITableModel) {
     this._data = model.data;
@@ -88,7 +86,7 @@ export class HomeUtilsService {
         return tempFilters;
       }),
       // replace Set with Array
-      mergeMap(tempFilters => {
+      map(tempFilters => {
         const filters: IFilters = {};
         Object.keys(tempFilters).forEach(filterKey => {
           if (tempFilters[filterKey] instanceof Set) {
@@ -97,7 +95,7 @@ export class HomeUtilsService {
             filters[filterKey] = tempFilters[filterKey] as INumberFilterValue;
           }
         });
-        return of(filters);
+        return filters;
       })
     ).subscribe(filters => {
       this.filters$.next(filters);
@@ -108,18 +106,48 @@ export class HomeUtilsService {
   }
 
   filterData(filters: IFilters) {
-    this._filterSourcesSub?.unsubscribe();
-
     if (!filters) {
-      this.tableData$.next({
-        data: this._data,
-        isReset: true
-      });
+      this.streamData(this._data, null);
       return;
     }
 
-    // filter empty filters
-    const parsedFilters = Object.keys(filters).reduce((result: IFilters, filterKey: string) => {
+    filters = this.filterEmptyFilters(filters);
+    if (!Object.keys(filters).length) {
+      this.streamData(this._data, null);
+      return;
+    }
+
+    this.streamData(this._data, filters);
+  }
+
+  private streamData(data: IProduct[], filters?: IFilters) {
+    this._filterSourcesSub?.unsubscribe();
+
+    this.tableData$.next({
+      data: [],
+      reset: true
+    });
+
+    this._filterSourcesSub = from(data).pipe(
+      bufferCount(100),
+      concatMap((chunk: IProduct[]) => of([...chunk]).pipe(delay(10))),
+      mergeMap((chunk: IProduct[]) => {
+        if (filters) {
+          return this.filterData1(chunk, filters);
+        } else {
+          return of(chunk);
+        }
+      })
+    ).subscribe((products: IProduct[]) => {
+      this.tableData$.next({
+        data: products,
+        reset: false
+      });
+    });
+  }
+
+  private filterEmptyFilters(filters: IFilters) {
+    return Object.keys(filters).reduce((result: IFilters, filterKey: string) => {
       if (Array.isArray(filters[filterKey])) {
         if ((filters[filterKey] as string[]).length) {
           result[filterKey] = filters[filterKey];
@@ -136,57 +164,34 @@ export class HomeUtilsService {
       }
       return result;
     }, {});
+  }
 
-    if (!Object.keys(parsedFilters).length) {
-      this.tableData$.next({
-        data: this._data,
-        isReset: true
-      });
-      return;
-    }
-
-    this.tableData$.next({
-      data: [],
-      isReset: true
-    });
-
-    const filterKeys = Object.keys(parsedFilters);
-    this._filterSourcesSub = from(this._data).pipe(
-      bufferCount(100),
-      concatMap(chunk => of([...chunk]).pipe(delay(100))),
-      // filter sources
-      mergeMap((chunk: IProduct[]) => {
-        const filteredChunk = chunk.reduce((result: IProduct[], origSource: IProduct) => {
-          const source = {...origSource, ...{tags: [...origSource.tags]}};
-          for (let i = 0; i < filterKeys.length; i++) {
-            const filterKey = filterKeys[i];
-            const filterValue = parsedFilters[filterKey];
-            if (Array.isArray(filterValue)) {
-              if (!this.filterByArray(source, filterKey, filterValue)) {
-                return result;
-              }
-            } else if (typeof filterValue === 'string') {
-              if (!this.filterByString(source, filterValue)) {
-                return result;
-              }
-            } else {
-              if (!this.filterByNumber(source, filterKey, filterValue)) {
-                return result;
-              }
-            }
+  private filterData1(data: IProduct[], filters: IFilters): Observable<IProduct[]> {
+    const filterKeys = Object.keys(filters);
+    const filteredChunk = data.reduce((result: IProduct[], origSource: IProduct) => {
+      const source = {...origSource, ...{tags: [...origSource.tags]}};
+      for (let i = 0; i < filterKeys.length; i++) {
+        const filterKey = filterKeys[i];
+        const filterValue = filters[filterKey];
+        if (Array.isArray(filterValue)) {
+          if (!this.filterByArray(source, filterKey, filterValue)) {
+            return result;
           }
-    
-          result.push(source);
-          return result;
-        }, []);
-        return of(filteredChunk);
-      })
-    ).subscribe((products: IProduct[]) => {
-      this.tableData$.next({
-        data: products,
-        isReset: false
-      });
-    });
+        } else if (typeof filterValue === 'string') {
+          if (!this.filterByString(source, filterValue)) {
+            return result;
+          }
+        } else {
+          if (!this.filterByNumber(source, filterKey, filterValue)) {
+            return result;
+          }
+        }
+      }
+
+      result.push(source);
+      return result;
+    }, []);
+    return of(filteredChunk);
   }
 
   private filterByString(item: IProduct, filterStr: string): boolean {

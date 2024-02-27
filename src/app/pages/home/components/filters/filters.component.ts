@@ -22,11 +22,14 @@ export class FiltersComponent {
 
   @Input() set filters(filters: IFilters) {
     this.resetFilters();
-    this.buildForm(filters);
 
-    this.filtersForm.valueChanges.subscribe(formValue => {
-      this.onFiltersChanged.emit(formValue);
-    });
+    if (filters) {
+      this.buildForm(filters);
+
+      this.filtersForm.valueChanges.subscribe(formValue => {
+        this.onFiltersChanged.emit(formValue);
+      });
+    } 
   }
 
   @Output() onFiltersChanged = new EventEmitter<IFilters>();

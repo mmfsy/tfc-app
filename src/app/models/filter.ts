@@ -1,15 +1,17 @@
-export interface IArrayFilter {
+export interface IFilter {
     key: string;
+    title?: string;
+}
+
+export interface IArrayFilter extends IFilter {
     value: string[];
 }
 
-export interface ITextFilter {
-    key: string;
+export interface ITextFilter extends IFilter {
     value: string;
 }
 
-export interface INumberFilter {
-    key: string;
+export interface INumberFilter extends IFilter {
     value: INumberFilterValue;
 }
 

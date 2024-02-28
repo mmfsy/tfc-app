@@ -1,6 +1,24 @@
 <div class="filter-container">
-    <span class="filter-title"> Filter <span class="exclude">by</span> {{title}}: </span>
+    <span class="filter-title" *ngIf="data">
+        <ng-container
+            [ngTemplateOutlet]="filterTitleTemplate || defaultFilterTitle"
+            [ngTemplateOutletContext]="{$implicit: data}">
+        </ng-container>
+    </span>
     <div class="filter-content">
-        <ng-content select="[filterTemplate]"></ng-content>
+        <ng-container
+            [ngTemplateOutlet]="filterContentTemplate || defaultFilterContent"
+            [ngTemplateOutletContext]="{$implicit: data}">
+        </ng-container>
     </div>
 </div>
+
+<ng-template #defaultFilterTitle>
+    Filter
+    <span class="exclude">by</span>
+    {{data.key}}:
+</ng-template>
+
+<ng-template #defaultFilterContent>
+    Default content
+</ng-template>

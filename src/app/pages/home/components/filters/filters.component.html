@@ -1,23 +1,37 @@
 <div class="sidebar-container">
-    <app-filter class="sidebar-filter text-filter" *ngFor="let textFilter of textFilters" [title]="textFilter.key">
-        <app-filter-text 
-            filterTemplate
-            [filterData]="textFilter"
-            (onChanged)="onTextFilterChanged($event)">
-        </app-filter-text>
-    </app-filter>
-    <app-filter class="sidebar-filter num-filter" *ngFor="let numberFilter of numberFilters" [title]="numberFilter.key">
-        <app-filter-number
-            filterTemplate
-            [filterData]="numberFilter"
-            (onChanged)="onNumberFilterChanged($event)">
-        </app-filter-number>
-    </app-filter>
-    <app-filter class="sidebar-filter arr-filter" *ngFor="let arrayFilter of arrayFilters" [title]="arrayFilter.key">
-        <app-filter-array
-            filterTemplate
-            [filterData]="arrayFilter"
-            (onChanged)="onArrayFilterChanged($event)">
-        </app-filter-array>
-    </app-filter>
+    <ng-container *ngFor="let filterGroup of filtersGroups.iterableFiltersGroups">
+        <app-filter 
+            class="sidebar-filter"
+            [ngClass]="filterGroup.key"
+            *ngFor="let filter of filterGroup.value.filters"
+            [data]="filter"
+            [filterTitleTemplate]="filter.title ? filterTitleTemplate : null"
+            [filterContentTemplate]="filterGroup.value.templateRef"
+        ></app-filter>
+    </ng-container>
 </div>
+
+<ng-template #filterTitleTemplate let-filterData>
+    {{filterData.title}}
+</ng-template>
+
+<ng-template #textFilterContentTemplate let-filterData>
+    <app-filter-text 
+        [filterData]="filterData"
+        (onChanged)="onTextFilterChanged($event)">
+    </app-filter-text>
+</ng-template>
+
+<ng-template #numberFilterContentTemplate let-filterData>
+    <app-filter-number
+        [filterData]="filterData"
+        (onChanged)="onNumberFilterChanged($event)">
+    </app-filter-number>
+</ng-template>
+
+<ng-template #arrayFilterContentTemplate let-filterData>
+    <app-filter-array
+        [filterData]="filterData"
+        (onChanged)="onArrayFilterChanged($event)">
+    </app-filter-array>
+</ng-template>

@@ -13,12 +13,16 @@ import { FilterArrayComponent } from './components/filters/filter-array/filter-a
 import { FilterTextComponent } from './components/filters/filter-text/filter-text.component';
 import { FilterNumberComponent } from './components/filters/filter-number/filter-number.component';
 
+import { SortByPipe } from './pipes/sort-by.pipe';
+
 @NgModule({
   declarations: [
     FilterComponent,
     FilterArrayComponent,
     FilterTextComponent,
-    FilterNumberComponent
+    FilterNumberComponent,
+
+    SortByPipe
   ],
   imports: [
     CommonModule,
@@ -41,7 +45,9 @@ import { FilterNumberComponent } from './components/filters/filter-number/filter
     FilterComponent,
     FilterArrayComponent,
     FilterTextComponent,
-    FilterNumberComponent
+    FilterNumberComponent,
+
+    SortByPipe
   ]
 })
 export class SharedModule { }
